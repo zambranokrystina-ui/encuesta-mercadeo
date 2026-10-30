@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cuestionario para tu proyecto web</title>
+<style>
+  :root{--ink:#1f1f1d;--muted:#6b6a64;--line:#d9d6cc;--bg:#faf8f3;--card:#ffffff;--accent:#2f5d50;--accent-soft:#e3efea}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;background:var(--bg);color:var(--ink);line-height:1.6}
+  .wrap{max-width:760px;margin:0 auto;padding:32px 20px 64px}
+  header h1{font-size:26px;margin:0 0 8px;font-weight:600}
+  header p{margin:0 0 6px;color:var(--muted)}
+  .intro{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:20px 0 24px}
+  .intro strong{color:var(--ink)}
+  .progress{position:sticky;top:0;background:var(--bg);padding:12px 0;z-index:2}
+  .progress-text{font-size:14px;color:var(--muted);margin-bottom:6px}
+  .bar{height:6px;background:var(--line);border-radius:4px;overflow:hidden}
+  .bar div{height:100%;width:0;background:var(--accent);transition:width .25s}
+  h2.sec{font-size:18px;margin:32px 0 10px;font-weight:600;color:var(--accent)}
+  .q{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px}
+  .qt{font-size:15px;font-weight:600;margin:0 0 4px}
+  .hint{font-size:13px;color:var(--muted);margin:0 0 10px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{font:inherit;font-size:14px;padding:8px 14px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--ink);cursor:pointer;text-align:left}
+  .opt:hover{border-color:#b7b3a6}
+  .opt[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent);font-weight:500}
+  .opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .box{margin-top:24px;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+  .box label{display:block;font-weight:600;margin:12px 0 6px}
+  .box label:first-child{margin-top:0}
+  input[type=text],input[type=email],textarea{width:100%;font:inherit;font-size:14px;padding:10px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+  textarea{min-height:90px;resize:vertical}
+  .actions{margin-top:28px;display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .btn{font:inherit;font-size:15px;padding:12px 22px;border-radius:8px;border:1px solid var(--accent);background:var(--accent);color:#fff;cursor:pointer;font-weight:500}
+  .btn:hover{opacity:.92}
+  .btn:disabled{opacity:.6;cursor:wait}
+  .msg{font-size:14px;color:var(--muted)}
+  .msg.err{color:#a33}
+  .thanks{display:none;background:var(--accent-soft);border:1px solid var(--accent);border-radius:12px;padding:20px;margin-top:24px}
+  .thanks h2{margin:0 0 6px;font-size:20px;color:var(--accent)}
+  .thanks p{margin:0;color:var(--ink)}
+  footer{margin-top:40px;font-size:13px;color:var(--muted);text-align:center}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Cuestionario para tu proyecto web</h1>
+    <p>Gracias por tu tiempo. Estas preguntas nos ayudan a entender lo que necesitas antes de preparar tu propuesta.</p>
+  </header>
+
+  <div class="intro">
+    <strong>Cómo llenarlo:</strong> marca la opción que más se parezca a lo que buscas. En las preguntas que dicen "puedes marcar varias", elige todas las que apliquen. Si ninguna opción te representa, escríbelo en los comentarios al final. No hay respuestas incorrectas.
+  </div>
+
+  <div class="progress">
+    <div class="progress-text" id="prog">0 de 20 respondidas</div>
+    <div class="bar"><div id="bar"></div></div>
+  </div>
+
+  <form id="form" action="https://formspree.io/f/xyekleny" method="POST">
+    <div id="root"></div>
+
+    <div class="box">
+      <label for="nombre">Tu nombre</label>
+      <input type="text" id="nombre" name="nombre" required>
+      <label for="email">Tu correo</label>
+      <input type="email" id="email" name="email" required>
+      <label for="comments">Comentarios o algo que no aparezca arriba</label>
+      <textarea id="comments" name="comentarios_libres" placeholder="Por ejemplo: fechas importantes, algo que quieras que tu página tenga o evite, o cualquier duda."></textarea>
+    </div>
+
+    <input type="hidden" name="respuestas" id="respuestas">
+    <input type="hidden" name="_subject" value="Cuestionario de proyecto web">
+
+    <div class="actions">
+      <button class="btn" id="send" type="submit">Enviar mis respuestas</button>
+      <span class="msg" id="status"></span>
+    </div>
+  </form>
+
+  <div class="thanks" id="thanks">
+    <h2>¡Gracias, recibimos tus respuestas!</h2>
+    <p>Preparamos tu propuesta con esta información y te la enviaremos pronto.</p>
+  </div>
+
+  <footer>Mercadeo MRR LLC</footer>
+</div>
+
+<script>
+var S=[
+["Tu negocio y tu meta",[
+{t:"¿Qué quieres que haga principalmente tu página?",m:1,o:["Vender productos o servicios en línea","Captar datos de personas interesadas","Mostrar tu trabajo y dar a conocer tu marca","Agendar citas o llamadas","Otra (escribir en comentarios)"]},
+{t:"¿Cuál es tu prioridad al terminar la página?",o:["Recibir contactos nuevos","Vender directamente","Verse profesional y dar credibilidad","Otra (escribir en comentarios)"]},
+{t:"¿A quién le vendes o a quién quieres llegar?",m:1,o:["Mujeres emprendedoras","Comunidad hispana en EE. UU.","Clientes en Latinoamérica","Público general"]}]],
+["Estructura de la página",[
+{t:"¿Cuántas páginas necesitas?",o:["Una sola página (landing)","2 a 4 páginas","Más de 4 páginas o una tienda","No estoy segura, quiero que me recomienden"]},
+{t:"¿Qué secciones debe tener?",m:1,o:["Inicio con mensaje principal y botón","Servicios o productos","Sobre mí o sobre la marca","Testimonios o casos de éxito","Preguntas frecuentes","Contacto o formulario","Galería de fotos o videos","Blog o artículos"]},
+{t:"¿En qué idiomas?",o:["Solo español","Español e inglés (con botón para cambiar)","Solo inglés"]}]],
+["Tu marca",[
+{t:"¿Ya tienes logo, colores y tipografías?",o:["Sí, todo listo","Tengo logo pero no colores ni letras","No tengo nada, necesito ayuda para crearlo"]},
+{t:"¿Cómo describirías el estilo de tu marca?",o:["Elegante y sofisticado","Cálido y cercano","Moderno y minimalista","Colorido y divertido","Espiritual o terapéutico, tonos suaves"]},
+{t:"¿Tienes fotos profesionales tuyas o de tus productos?",o:["Sí, suficientes para la página","Algunas, me gustaría tener más","No, necesito ayuda para conseguirlas"]},
+{t:"¿Quién escribirá los textos de la página?",o:["Yo los escribo","Yo tengo la idea y ustedes redactan","Quiero que ustedes los escriban desde cero"]}]],
+["Redes sociales y conexión",[
+{t:"¿Qué redes quieres conectar con la página?",m:1,o:["Instagram","Facebook","TikTok","YouTube","WhatsApp","Otra (escribir en comentarios)"]},
+{t:"¿Quieres que la página muestre tus publicaciones de Instagram?",o:["Sí","No, solo enlaces","No sé qué significa, explícamelo"]},
+{t:"¿Quién maneja hoy tu marca personal y tus redes?",o:["Lo hago yo misma","Una persona externa (¿tendrá acceso a la página?)","Una agencia"]}]],
+["Funciones técnicas",[
+{t:"¿Qué debe pasar cuando alguien llena un formulario?",o:["Me llega un correo","Se guarda en una hoja de Google Sheets","Ambas cosas","Se conecta con mi sistema de correo (email marketing)"]},
+{t:"¿Vas a cobrar en la página?",o:["No, es solo informativa","Sí, con pago directo (Stripe, PayPal, Zelle)","Sí, con carrito de compras","Todavía no lo sé"]},
+{t:"¿Quieres un botón flotante de WhatsApp?",o:["Sí","No"]},
+{t:"¿Ya tienes dominio (www.tunombre.com)?",o:["Sí","No, hay que comprarlo","No sé qué es esto, explícamelo"]}]],
+["Entrega y después",[
+{t:"¿Quieres aprender a hacer cambios tú misma?",o:["Sí, con sesión de capacitación y manual","Prefiero pedirles los cambios","Un poco de cada una"]},
+{t:"¿Cuándo necesitas la página lista?",o:["Menos de 2 semanas","Entre 2 y 4 semanas","Más de 4 semanas","Tengo una fecha específica (escríbela en comentarios)"]},
+{t:"¿Tienes un presupuesto aproximado en mente?",o:["Menos de $750","$750 a $1,500","$1,500 a $2,500","$2,500 a $3,000","Prefiero que me digan el costo según lo que necesito"]}]]
+];
+var Q=[];S.forEach(function(s){s[1].forEach(function(q){Q.push({q:q,a:[]})})});
+var root=document.getElementById('root');var n=0;
+S.forEach(function(s){
+  var h=document.createElement('h2');h.className='sec';h.textContent=s[0];root.appendChild(h);
+  s[1].forEach(function(q){
+    n++;var idx=n-1;
+    var card=document.createElement('div');card.className='q';
+    var t=document.createElement('p');t.className='qt';t.textContent=n+'. '+q.t;card.appendChild(t);
+    if(q.m){var hn=document.createElement('p');hn.className='hint';hn.textContent='Puedes marcar varias';card.appendChild(hn);}
+    var r=document.createElement('div');r.className='opts';
+    q.o.forEach(function(lab){
+      var b=document.createElement('button');b.className='opt';b.type='button';b.textContent=lab;b.setAttribute('aria-pressed','false');
+      b.addEventListener('click',function(){
+        var on=b.getAttribute('aria-pressed')==='true';
+        if(!q.m){Array.prototype.forEach.call(r.children,function(c){c.setAttribute('aria-pressed','false')});Q[idx].a=[];}
+        if(on){b.setAttribute('aria-pressed','false');Q[idx].a=Q[idx].a.filter(function(x){return x!==lab})}
+        else{b.setAttribute('aria-pressed','true');Q[idx].a.push(lab)}
+        prog();
+      });
+      r.appendChild(b);
+    });
+    card.appendChild(r);root.appendChild(card);
+  });
+});
+function prog(){
+  var c=Q.filter(function(x){return x.a.length>0}).length;
+  document.getElementById('prog').textContent=c+' de 20 respondidas';
+  document.getElementById('bar').style.width=(c/20*100)+'%';
+}
+function armar(){
+  var L=[];
+  Q.forEach(function(x,i){
+    L.push((i+1)+'. '+x.q.t);
+    L.push('   → '+(x.a.length?x.a.join(', '):'(sin responder)'));
+  });
+  return L.join('\n');
+}
+var form=document.getElementById('form');
+form.addEventListener('submit',function(e){
+  e.preventDefault();
+  var btn=document.getElementById('send');var st=document.getElementById('status');
+  var miss=Q.filter(function(x){return x.a.length===0}).length;
+  if(miss && !confirm('Te faltan '+miss+' preguntas por responder. ¿Enviar así?')) return;
+  document.getElementById('respuestas').value=armar();
+  btn.disabled=true;btn.textContent='Enviando...';st.textContent='';st.className='msg';
+  var fd=new FormData(form);
+  fetch(form.action,{method:'POST',body:fd,headers:{'Accept':'application/json'}})
+    .then(function(r){
+      if(r.ok){form.hidden=true;document.querySelector('.progress').hidden=true;document.getElementById('thanks').style.display='block';window.scrollTo({top:0,behavior:'smooth'});}
+      else throw new Error('fail');
+    })
+    .catch(function(){
+      btn.disabled=false;btn.textContent='Enviar mis respuestas';
+      st.textContent='No se pudo enviar. Revisa tu conexión e intenta de nuevo.';st.className='msg err';
+    });
+});
+</script>
+</body>
+</html>
